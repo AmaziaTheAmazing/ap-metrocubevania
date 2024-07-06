@@ -968,6 +968,41 @@
 	cursor:pointer;
 }
 
+html {
+	color: white;
+}
+
+h1 {
+	color: #ff004d;
+	text-decoration: underline;
+	text-decoration-color: white;
+}
+
+.default-hidden {
+	display: none;
+}
+
+.submit-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.status-wrapper {
+	width: 150px;
+
+}
+
+#status-connected {
+	color: green;
+}
+#status-failed {
+	color: red;
+}
+#status-connecting {
+	color: green;
+}
+
 canvas{
     image-rendering: optimizeSpeed;
     image-rendering: -moz-crisp-edges;
@@ -1002,13 +1037,15 @@ canvas{
 	fill:none;
 }
 
+#
+
 -->
 </STYLE>
 
 </head>
 
 <body style="padding:0px; margin:0px; background-color:#222; color:#ccc">
-<div id="body_0"> <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
+<center><div id="body_0", style="width:512px"> <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
 
 
 <!-- Add any content above the cart here -->
@@ -1146,6 +1183,7 @@ canvas{
             ITEMS_HANDLING_FLAGS,
             SERVER_PACKET_TYPE,
             CLIENT_STATUS ,
+            CLIENT_PACKET_TYPE,
         } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
         // Create a new Archipelago client
@@ -1203,6 +1241,7 @@ canvas{
             players = packet.players.map(player => {
             	return player.name;
             });
+            client.send({cmd: CLIENT_PACKET_TYPE.SYNC});
         });
 
         client.addListener(SERVER_PACKET_TYPE.ROOM_UPDATE, (packet) => {
