@@ -12,9 +12,8 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body style="padding:0px; margin:0px; background-color:#222; color:#ccc">
-  <center>
-    <div id="body_0" , style="width:512px">
+<body class="d-flex justify-content-center" style="padding:0px; margin:0px; background-color:#222; color:#ccc">
+    <div id="body_0" style="width:512px">
       <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
 
 
@@ -131,25 +130,30 @@
 
       <div id="mainDiv">
         <form id="connection_details">
-          <label for="fname">Hostname:</label>
-          <input type="text" id="Hostname" name="Hostname"><br>
+          <div class="input-group input-group-sm mb-2">
+            <label class="input-group-text" for="hostname">Hostname:</label>
+            <input class="form-control" type="text" id="hostname" name="Hostname" value="archipelago.gg">
+          </div>
 
-          <label for="fname">Port:</label>
-          <input type="text" id="Port" name="Port"><br>
+          <div class="input-group input-group-sm mb-2">
+            <label class="input-group-text" for="port">Port:</label>
+            <input class="form-control" type="text" id="port" name="Port">
+          </div>
 
-          <label for="fname">Name:</label>
-          <input type="text" id="Name" name="Name"><br><br>
-          <div class="submit-wrapper">
-            <input type="submit" value="Submit">
-            <div class="status-wrapper">
-              <div id="status-connected" class="default-hidden">Connected</div>
-              <div id="status-failed" class="default-hidden">Connection Failed</div>
-              <div id="status-connecting" class="default-hidden">Connecting...</div>
+          <div class="input-group input-group-sm mb-2">
+            <label class="input-group-text" for="slot-name">Name:</label>
+            <input class="form-control" type="text" id="slot-name" name="Name">
+          </div>
+          <div class="d-flex justify-content-start">
+            <button class="btn btn-primary me-3" type="submit">Submit</button>
+            <div class="status-wrapper align-content-around d-none">
+              <div class="status-connected d-none">Connected</div>
+              <div class="status-failed d-none">Connection Failed</div>
+              <div class="status-connecting d-none">Connecting...</div>
             </div>
           </div>
         </form>
       </div>
-  </center>
 
   <script src="pico8-gpio-listener.js"></script>
   <script type="module">
@@ -166,7 +170,7 @@
     const form = document.getElementById("connection_details")
 
     //pico-8 related declarations
-    var gpio = getP8Gpio();
+    const gpio = getP8Gpio();
     const loc_flags = {
       "Springboards": [0, 1],
       "Double Jump": [1, 3],
@@ -202,7 +206,7 @@
         gpio[index] = message[i].charCodeAt(0);
         log += message[i].charCodeAt(0).toString(2) + " ";
         index++;
-        if (i % 30 == 29) {
+        if (i % 30 === 29) {
           gpio[index] = 10//"\n".charCodeAt(0).toString(2);
           log += message[i].charCodeAt(0).toString(2);
           index++;
@@ -226,7 +230,7 @@
     //add item handler for gpio layer
     client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
       //if this is a sync packet reset all our item addresses without changing anything else
-      if (packet.index == 0) {
+      if (packet.index === 0) {
         for (let i = 10; i < 20; i++) {
           gpio[i] = 0;
         }
@@ -257,10 +261,10 @@
     form.addEventListener("submit", (event) => {
       event.preventDefault()
       const connectionInfo = {
-        hostname: document.getElementById("Hostname").value,
-        port: Number(document.getElementById("Port").value),
+        hostname: document.getElementById("hostname").value,
+        port: Number(document.getElementById("port").value),
         game: "MetroCUBEvania",
-        name: document.getElementById("Name").value,
+        name: document.getElementById("slot-name").value,
         items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL,
         version: {
           build: 0,
@@ -272,36 +276,31 @@
       console.log(connectionInfo.port)
       console.log(connectionInfo.name)
 
+      const statusWrapper = document.querySelector(".status-wrapper");
+      const connected = document.querySelector(".status-connected");
+      const failed = document.querySelector(".status-failed");
+      const connecting = document.querySelector(".status-connecting");
 
-      document.getElementById("status-connected").classList.add("default-hidden")
-      document.getElementById("status-failed").classList.add("default-hidden")
+      statusWrapper.classList.remove("d-none");
+      connected.classList.add("d-none");
+      failed.classList.add("d-none");
+      connecting.classList.remove("d-none");
 
-      document.getElementById("status-connecting").classList.remove("default-hidden")
       client
         .connect(connectionInfo)
         .then(() => {
           console.log("Connected to the server");
-          document.getElementById("status-connecting").classList.add("default-hidden")
-          document.getElementById("status-connected").classList.remove("default-hidden")
+          connecting.classList.add("d-none");
+          connected.classList.remove("d-none");
           // You are now connected and authenticated to the server. You can add more code here if need be.
         })
         .catch((error) => {
           console.error("Failed to connect:", error);
-          document.getElementById("status-connecting").classList.add("default-hidden")
-          document.getElementById("status-failed").classList.remove("default-hidden")
+          connecting.classList.add("d-none");
+          failed.classList.remove("d-none");
           // Handle the connection error.
         });
     });
-
-    function connect() {
-
-
-    }
-
-    // Disconnect from the server when unloading window.
-    // window.addEventListener("beforeunload", () => {
-    //     client.disconnect();
-    // })
 
     // add location handler for gpio layer
     gpio.subscribe(function (newIndices) {
@@ -316,13 +315,8 @@
         }
       }
     });
-
-
   </script>
-
-
-
-  </div> <!-- body_0 -->
+  </div>
 </body>
 
 </html>
