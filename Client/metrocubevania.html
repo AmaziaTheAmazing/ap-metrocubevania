@@ -563,7 +563,7 @@
         }
       }
 
-      // create audio context and wake it up (for iOS -- needs happen inside touch event)		
+      // create audio context and wake it up (for iOS -- needs happen inside touch event)
       p8_create_audio_context();
 
       // show touch elements
@@ -1039,12 +1039,10 @@
                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAABpklEQVR42u3au23DQBCEYUXOXIGKcujQXUgFuA0XIKgW90Q9oEAg+Ljd27vd2RsCf058gEDqhofPj+OB6SMCAQlIQAIyAhKQgARkBAQDnM6XSRsB7/2e/tSA0//12fCAKsQX3ntDA4oRFwBRIc0AixE38BAhTQGLEAsBUSDNAXcRhYDRIZsAPlp99VECRoXsDpgN0g0wC6Q7IDpkGEBUyG6A0+vKBtkdMBukG2AWSHdAdMgwgKiQ4QDRIMMCokCGB4wOCQPYFVKw2cABNocUjl6wgE0gFashPKAZpHJ2TQNYBVmxW6cDFENWDv9pAUshCVgJScBKSAISkD9hPkT4GkNAMdzepyj8Kye852EBLe51CZHHWQK4JcThD1SlcHPEYY/0a+A0n6SkGZV6w6WZNb3g4Id1b7hwgGhwYQBR4dwB0eHcALPAdQfMBhcOEA0uDCAqnDsgOpwbYBa4poA/31+rZYFrBriFpwGMCtcEcA9PAhgdzhywBK8EEQXOFFCCtwaIBmcGKMWbI6LCmQBq8R6hw5kAMgISkIAEJCAjIAEJSEBGQI9ukV7lRn9nD+gAAAAASUVORK5CYII=" />
             </div>
 
-            <div id="p8_playarea" style="display:none; margin:auto;
-				-webkit-user-select:none; -moz-user-select: none; user-select: none; -webkit-touch-callout:none;
-		">
+            <div id="p8_playarea" style="display:none; margin:auto; -webkit-user-select:none; -moz-user-select: none; user-select: none; -webkit-touch-callout:none;">
 
               <div id="touch_controls_background" style=" pointer-events:none; display:none; background-color:#000;
-						 position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
+                 position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
                 &nbsp
               </div>
 
@@ -1070,7 +1068,7 @@
 
               <!-- display after first layout update -->
               <div id="touch_controls_gfx" style=" pointer-events:none; display:table; 
-						 position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
+                   position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
 
                 <img src="" id="controls_right_panel" style="position:absolute; opacity:0.5;">
                 <img src="" id="controls_left_panel" style="position:absolute;  opacity:0.5;">
