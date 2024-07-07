@@ -13,309 +13,306 @@
 </head>
 
 <body class="d-flex justify-content-center" style="padding:0px; margin:0px; background-color:#222; color:#ccc">
-    <div id="body_0" style="width:512px">
-      <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
+  <div id="body_0" style="width:512px">
+    <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
 
 
-      <!-- Add any content above the cart here -->
+    <!-- Add any content above the cart here -->
 
 
-      <div id="p8_frame_0" style="max-width:800px; max-height:800px; margin:auto;">
-        <!-- double function: limit size, and display only this div for touch devices -->
-        <div id="p8_frame"
-          style="display:flex; width:100%; max-width:95vw; height:100vw; max-height:95vh; margin:auto;">
+    <div id="p8_frame_0" style="max-width:800px; max-height:800px; margin:auto;">
+      <!-- double function: limit size, and display only this div for touch devices -->
+      <div id="p8_frame" style="display:flex; width:100%; max-width:95vw; height:100vw; max-height:95vh; margin:auto;">
 
-          <div id="p8_menu_buttons_touch" style="position:absolute; width:100%; z-index:10; left:0px;">
-            <div class="p8_menu_button" id="p8b_full" style="float:left;margin-left:10px"
-              onClick="p8_give_focus(); p8_request_fullscreen();"></div>
-            <div class="p8_menu_button" id="p8b_sound" style="float:left;margin-left:10px"
-              onClick="p8_give_focus(); p8_create_audio_context(); Module.pico8ToggleSound();"></div>
-            <div class="p8_menu_button" id="p8b_close" style="float:right; margin-right:10px"
-              onClick="p8_close_cart();"></div>
+        <div id="p8_menu_buttons_touch" style="position:absolute; width:100%; z-index:10; left:0px;">
+          <div class="p8_menu_button" id="p8b_full" style="float:left;margin-left:10px"
+            onClick="p8_give_focus(); p8_request_fullscreen();"></div>
+          <div class="p8_menu_button" id="p8b_sound" style="float:left;margin-left:10px"
+            onClick="p8_give_focus(); p8_create_audio_context(); Module.pico8ToggleSound();"></div>
+          <div class="p8_menu_button" id="p8b_close" style="float:right; margin-right:10px" onClick="p8_close_cart();">
+          </div>
+        </div>
+
+        <div id="p8_container" style="margin:auto; display:table;" onclick="p8_create_audio_context(); p8_run_cart();">
+
+          <div id="p8_start_button" class="p8_start_button" style="width:100%; height:100%; display:flex;">
+            <img width=80 height=80 style="margin:auto;"
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAABpklEQVR42u3au23DQBCEYUXOXIGKcujQXUgFuA0XIKgW90Q9oEAg+Ljd27vd2RsCf058gEDqhofPj+OB6SMCAQlIQAIyAhKQgARkBAQDnM6XSRsB7/2e/tSA0//12fCAKsQX3ntDA4oRFwBRIc0AixE38BAhTQGLEAsBUSDNAXcRhYDRIZsAPlp99VECRoXsDpgN0g0wC6Q7IDpkGEBUyG6A0+vKBtkdMBukG2AWSHdAdMgwgKiQ4QDRIMMCokCGB4wOCQPYFVKw2cABNocUjl6wgE0gFashPKAZpHJ2TQNYBVmxW6cDFENWDv9pAUshCVgJScBKSAISkD9hPkT4GkNAMdzepyj8Kye852EBLe51CZHHWQK4JcThD1SlcHPEYY/0a+A0n6SkGZV6w6WZNb3g4Id1b7hwgGhwYQBR4dwB0eHcALPAdQfMBhcOEA0uDCAqnDsgOpwbYBa4poA/31+rZYFrBriFpwGMCtcEcA9PAhgdzhywBK8EEQXOFFCCtwaIBmcGKMWbI6LCmQBq8R6hw5kAMgISkIAEJCAjIAEJSEBGQI9ukV7lRn9nD+gAAAAASUVORK5CYII=" />
           </div>
 
-          <div id="p8_container" style="margin:auto; display:table;"
-            onclick="p8_create_audio_context(); p8_run_cart();">
+          <div id="p8_playarea"
+            style="display:none; margin:auto; -webkit-user-select:none; -moz-user-select: none; user-select: none; -webkit-touch-callout:none;">
 
-            <div id="p8_start_button" class="p8_start_button" style="width:100%; height:100%; display:flex;">
-              <img width=80 height=80 style="margin:auto;"
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAABpklEQVR42u3au23DQBCEYUXOXIGKcujQXUgFuA0XIKgW90Q9oEAg+Ljd27vd2RsCf058gEDqhofPj+OB6SMCAQlIQAIyAhKQgARkBAQDnM6XSRsB7/2e/tSA0//12fCAKsQX3ntDA4oRFwBRIc0AixE38BAhTQGLEAsBUSDNAXcRhYDRIZsAPlp99VECRoXsDpgN0g0wC6Q7IDpkGEBUyG6A0+vKBtkdMBukG2AWSHdAdMgwgKiQ4QDRIMMCokCGB4wOCQPYFVKw2cABNocUjl6wgE0gFashPKAZpHJ2TQNYBVmxW6cDFENWDv9pAUshCVgJScBKSAISkD9hPkT4GkNAMdzepyj8Kye852EBLe51CZHHWQK4JcThD1SlcHPEYY/0a+A0n6SkGZV6w6WZNb3g4Id1b7hwgGhwYQBR4dwB0eHcALPAdQfMBhcOEA0uDCAqnDsgOpwbYBa4poA/31+rZYFrBriFpwGMCtcEcA9PAhgdzhywBK8EEQXOFFCCtwaIBmcGKMWbI6LCmQBq8R6hw5kAMgISkIAEJCAjIAEJSEBGQI9ukV7lRn9nD+gAAAAASUVORK5CYII=" />
-            </div>
-
-            <div id="p8_playarea" style="display:none; margin:auto; -webkit-user-select:none; -moz-user-select: none; user-select: none; -webkit-touch-callout:none;">
-
-              <div id="touch_controls_background" style=" pointer-events:none; display:none; background-color:#000;
+            <div id="touch_controls_background" style=" pointer-events:none; display:none; background-color:#000;
                  position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
-                &nbsp
-              </div>
-
-              <div style="display:flex; position:relative">
-                <!-- pointer-events turned off for mobile in p8_update_layout because need for desktop mouse -->
-                <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault();">
-                </canvas>
-                <div class=p8_menu_buttons id="p8_menu_buttons" style="margin-left:10px;">
-                  <div class="p8_menu_button" style="position:absolute; bottom:125px" id="p8b_controls"
-                    onClick="p8_give_focus(); Module.pico8ToggleControlMenu();">
-                  </div>
-                  <div class="p8_menu_button" style="position:absolute; bottom:90px" id="p8b_pause"
-                    onClick="p8_give_focus(); Module.pico8TogglePaused(); p8_update_layout_hash = -22;">
-                  </div>
-                  <div class="p8_menu_button" style="position:absolute; bottom:55px" id="p8b_sound"
-                    onClick="p8_give_focus(); p8_create_audio_context(); Module.pico8ToggleSound();">
-                  </div>
-                  <div class="p8_menu_button" style="position:absolute; bottom:20px" id="p8b_full"
-                    onClick="p8_give_focus(); p8_request_fullscreen();"></div>
-                </div>
-              </div>
-
-
-              <!-- display after first layout update -->
-              <div id="touch_controls_gfx" style=" pointer-events:none; display:table; 
-                   position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
-
-                <img src="" id="controls_right_panel" style="position:absolute; opacity:0.5;">
-                <img src="" id="controls_left_panel" style="position:absolute;  opacity:0.5;">
-
-
-              </div> <!-- touch_controls_gfx -->
-
-              <!-- used for clipboard access & keyboard input; displayed and used by PICO-8 only once needed. can be safely removed if clipboard / key presses not needed. -->
-              <!-- (needs to be inside p8_playarea so that it still works under Chrome when fullscreened) -->
-              <!-- 0.2.5: added "display:none"; pico8.js shows on demand to avoid mac osx accent character selector // https://www.lexaloffle.com/bbs/?tid=47743 -->
-
-              <textarea id="codo_textarea" class="emscripten"
-                style="display:none; position:absolute; left:-9999px; height:0px; overflow:hidden"></textarea>
-
-            </div> <!--p8_playarea -->
-
-          </div> <!-- p8_container -->
-
-        </div> <!-- p8_frame -->
-      </div> <!-- p8_frame_0 size limit -->
-
-      <script type="text/javascript">
-
-        p8_update_layout();
-        p8_update_button_icons();
-
-        var canvas = document.getElementById("canvas");
-        Module = {};
-        Module.canvas = canvas;
-
-        // from @ultrabrite's shell: test if an AudioContext can be created outside of an event callback.
-        // If it can't be created, then require pressing the start button to run the cartridge
-
-        if (p8_autoplay) {
-          var temp_context = new AudioContext();
-          temp_context.onstatechange = function () {
-            if (temp_context.state == 'running') {
-              p8_run_cart();
-              temp_context.close();
-            }
-          };
-        }
-
-        // pointer lock request needs to be inside a canvas interaction event
-        // pico8_state.request_pointer_lock is true when 0x5f2d bit 0 and bit 2 are set -- poke(0x5f2d,0x5) 
-        // note on mouse acceleration for future: // https://github.com/w3c/pointerlock/pull/49
-        canvas.addEventListener("click", function () {
-          if (!p8_touch_detected)
-            if (pico8_state.request_pointer_lock)
-              canvas.requestPointerLock();
-        });
-
-      </script>
-
-      <!-- end pico cart -->
-
-      <div id="mainDiv">
-        <form id="connection_details">
-          <div class="input-group input-group-sm mb-2">
-            <label class="input-group-text" for="hostname">Hostname:</label>
-            <input class="form-control" type="text" id="hostname" name="Hostname" value="archipelago.gg">
-          </div>
-
-          <div class="input-group input-group-sm mb-2">
-            <label class="input-group-text" for="port">Port:</label>
-            <input class="form-control" type="text" id="port" name="Port">
-          </div>
-
-          <div class="input-group input-group-sm mb-2">
-            <label class="input-group-text" for="slot-name">Name:</label>
-            <input class="form-control" type="text" id="slot-name" name="Name">
-          </div>
-          <div class="d-flex justify-content-start">
-            <button class="btn btn-primary me-3" type="submit">Submit</button>
-            <div class="status-wrapper align-content-around d-none">
-              <div class="status-connected d-none">Connected</div>
-              <div class="status-failed d-none">Connection Failed</div>
-              <div class="status-connecting d-none">Connecting...</div>
+              &nbsp
             </div>
-          </div>
-        </form>
-      </div>
 
-  <script src="pico8-gpio-listener.js"></script>
-  <script type="module">
-    import {
-      Client,
-      ITEMS_HANDLING_FLAGS,
-      SERVER_PACKET_TYPE,
-      CLIENT_STATUS,
-      CLIENT_PACKET_TYPE,
-    } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+            <div style="display:flex; position:relative">
+              <!-- pointer-events turned off for mobile in p8_update_layout because need for desktop mouse -->
+              <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault();">
+              </canvas>
+              <div class=p8_menu_buttons id="p8_menu_buttons" style="margin-left:10px;">
+                <div class="p8_menu_button" style="position:absolute; bottom:125px" id="p8b_controls"
+                  onClick="p8_give_focus(); Module.pico8ToggleControlMenu();">
+                </div>
+                <div class="p8_menu_button" style="position:absolute; bottom:90px" id="p8b_pause"
+                  onClick="p8_give_focus(); Module.pico8TogglePaused(); p8_update_layout_hash = -22;">
+                </div>
+                <div class="p8_menu_button" style="position:absolute; bottom:55px" id="p8b_sound"
+                  onClick="p8_give_focus(); p8_create_audio_context(); Module.pico8ToggleSound();">
+                </div>
+                <div class="p8_menu_button" style="position:absolute; bottom:20px" id="p8b_full"
+                  onClick="p8_give_focus(); p8_request_fullscreen();"></div>
+              </div>
+            </div>
 
-    // Create a new Archipelago client
-    const client = new Client();
-    const form = document.getElementById("connection_details")
 
-    //pico-8 related declarations
-    const gpio = getP8Gpio();
-    const loc_flags = {
-      "Springboards": [0, 1],
-      "Double Jump": [1, 3],
-      "Dive": [2, 5],
-      "Key": [3, 7],
-      "Starting Medal": [4, 0],
-      "Springboards Medal": [5, 2],
-      "Lava Medal": [6, 6],
-      "Cage Medal": [7, 4],
-      "Ice Medal": [8, 8],
-      "victory": [9, 9],
-    };
+            <!-- display after first layout update -->
+            <div id="touch_controls_gfx" style=" pointer-events:none; display:table; 
+                   position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
+              <img src="" id="controls_right_panel" style="position:absolute; opacity:0.5;">
+              <img src="" id="controls_left_panel" style="position:absolute;  opacity:0.5;">
+            </div> <!-- touch_controls_gfx -->
 
-    const item_flags = {
-      "springboards": [0, 0],
-      "double jump": [1, 1],
-      "dive": [2, 2],
-      "key": [3, 3],
-      "starting medal": [4, 4],
-      "springboards medal": [5, 5],
-      "lava medal": [6, 6],
-      "cage medal": [7, 7],
-      "ice medal": [8, 8],
-    };
-    const base_id = 19828412012;
+            <!-- used for clipboard access & keyboard input; displayed and used by PICO-8 only once needed. can be safely removed if clipboard / key presses not needed. -->
+            <!-- (needs to be inside p8_playarea so that it still works under Chrome when fullscreened) -->
+            <!-- 0.2.5: added "display:none"; pico8.js shows on demand to avoid mac osx accent character selector // https://www.lexaloffle.com/bbs/?tid=47743 -->
 
-    let players = [];
+            <textarea id="codo_textarea" class="emscripten"
+              style="display:none; position:absolute; left:-9999px; height:0px; overflow:hidden"></textarea>
 
-    function message_pico8(message) {
-      let index = 20;
-      let log = "";
-      for (let i = 0; i < message.length; i++) {
-        gpio[index] = message[i].charCodeAt(0);
-        log += message[i].charCodeAt(0).toString(2) + " ";
-        index++;
-        if (i % 30 === 29) {
-          gpio[index] = 10//"\n".charCodeAt(0).toString(2);
-          log += message[i].charCodeAt(0).toString(2);
-          index++;
-        }
+          </div> <!--p8_playarea -->
+
+        </div> <!-- p8_container -->
+
+      </div> <!-- p8_frame -->
+    </div> <!-- p8_frame_0 size limit -->
+
+    <script type="text/javascript">
+
+      p8_update_layout();
+      p8_update_button_icons();
+
+      var canvas = document.getElementById("canvas");
+      Module = {};
+      Module.canvas = canvas;
+
+      // from @ultrabrite's shell: test if an AudioContext can be created outside of an event callback.
+      // If it can't be created, then require pressing the start button to run the cartridge
+
+      if (p8_autoplay) {
+        var temp_context = new AudioContext();
+        temp_context.onstatechange = function () {
+          if (temp_context.state == 'running') {
+            p8_run_cart();
+            temp_context.close();
+          }
+        };
       }
-    }
 
-    // Set up event listeners
-    client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet) => {
-      console.log("Connected to server: ", packet);
-      players = packet.players.map(player => {
-        return player.name;
+      // pointer lock request needs to be inside a canvas interaction event
+      // pico8_state.request_pointer_lock is true when 0x5f2d bit 0 and bit 2 are set -- poke(0x5f2d,0x5) 
+      // note on mouse acceleration for future: // https://github.com/w3c/pointerlock/pull/49
+      canvas.addEventListener("click", function () {
+        if (!p8_touch_detected)
+          if (pico8_state.request_pointer_lock)
+            canvas.requestPointerLock();
       });
-      client.send({ cmd: CLIENT_PACKET_TYPE.SYNC });
-    });
 
-    client.addListener(SERVER_PACKET_TYPE.ROOM_UPDATE, (packet) => {
-      console.log("Room update: ", packet);
-    });
+    </script>
 
-    //add item handler for gpio layer
-    client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
-      //if this is a sync packet reset all our item addresses without changing anything else
-      if (packet.index === 0) {
-        for (let i = 10; i < 20; i++) {
-          gpio[i] = 0;
+    <!-- end pico cart -->
+
+    <div id="mainDiv">
+      <form id="connection_details">
+        <div class="input-group input-group-sm mb-2">
+          <label class="input-group-text" for="hostname">Hostname:</label>
+          <input class="form-control" type="text" id="hostname" name="Hostname" value="archipelago.gg">
+        </div>
+
+        <div class="input-group input-group-sm mb-2">
+          <label class="input-group-text" for="port">Port:</label>
+          <input class="form-control" type="text" id="port" name="Port">
+        </div>
+
+        <div class="input-group input-group-sm mb-2">
+          <label class="input-group-text" for="slot-name">Name:</label>
+          <input class="form-control" type="text" id="slot-name" name="Name">
+        </div>
+        <div class="d-flex justify-content-start">
+          <button class="btn btn-primary me-3" type="submit">Submit</button>
+          <div class="status-wrapper align-content-around d-none">
+            <div class="status-connected d-none">Connected</div>
+            <div class="status-failed d-none">Connection Failed</div>
+            <div class="status-connecting d-none">Connecting...</div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="pico8-gpio-listener.js"></script>
+    <script type="module">
+      import {
+        Client,
+        ITEMS_HANDLING_FLAGS,
+        SERVER_PACKET_TYPE,
+        CLIENT_STATUS,
+        CLIENT_PACKET_TYPE,
+      } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+
+      // Create a new Archipelago client
+      const client = new Client();
+      const form = document.getElementById("connection_details")
+
+      //pico-8 related declarations
+      const gpio = getP8Gpio();
+      const loc_flags = {
+        "Springboards": [0, 1],
+        "Double Jump": [1, 3],
+        "Dive": [2, 5],
+        "Key": [3, 7],
+        "Starting Medal": [4, 0],
+        "Springboards Medal": [5, 2],
+        "Lava Medal": [6, 6],
+        "Cage Medal": [7, 4],
+        "Ice Medal": [8, 8],
+        "victory": [9, 9],
+      };
+
+      const item_flags = {
+        "springboards": [0, 0],
+        "double jump": [1, 1],
+        "dive": [2, 2],
+        "key": [3, 3],
+        "starting medal": [4, 4],
+        "springboards medal": [5, 5],
+        "lava medal": [6, 6],
+        "cage medal": [7, 7],
+        "ice medal": [8, 8],
+      };
+      const base_id = 19828412012;
+
+      let players = [];
+
+      function message_pico8(message) {
+        let index = 20;
+        let log = "";
+        for (let i = 0; i < message.length; i++) {
+          gpio[index] = message[i].charCodeAt(0);
+          log += message[i].charCodeAt(0).toString(2) + " ";
+          index++;
+          if (i % 30 === 29) {
+            gpio[index] = 10//"\n".charCodeAt(0).toString(2);
+            log += message[i].charCodeAt(0).toString(2);
+            index++;
+          }
         }
-        //for (let flag in item_flags) {
-        //gpio[Math.floor(item_flags[flag][0] / 8)] |= 2^(item_flags[flag][0] % 8)
-        //}
       }
-      //go through all our item addresses and if they are not set, check the recieved items for their ap id, and set the gpio flag if we recieved it
-      //on the scale i expect pico-8 games to be, this will be good enough
-      for (let flag in item_flags) {
-        let byte = Math.floor(item_flags[flag][0] / 8) + 10;
-        let item_bit = 2 ** (item_flags[flag][0] % 8)
-        //console.log(`flag: ${flag}  gpio byte: ${byte}  gpio data: ${gpio[byte]}  item_bit: ${item_bit}`);
-        if (!(gpio[byte] & item_bit)) {
-          for (let i = 0; i < packet.items.length; i++) {
-            let item = packet.items[i]
-            //console.log(`checking ${flag}: ${base_id + item_flags[flag][1]} === ${item.item}`)
-            if (base_id + item_flags[flag][1] === item.item) {
-              console.log(`adding item ${flag}`)
-              gpio[byte] |= item_bit
-              message_pico8(`got ${flag} from ${players[item.player - 1]}`.toLowerCase())
+
+      // Set up event listeners
+      client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet) => {
+        console.log("Connected to server: ", packet);
+        players = packet.players.map(player => {
+          return player.name;
+        });
+        client.send({ cmd: CLIENT_PACKET_TYPE.SYNC });
+      });
+
+      client.addListener(SERVER_PACKET_TYPE.ROOM_UPDATE, (packet) => {
+        console.log("Room update: ", packet);
+      });
+
+      //add item handler for gpio layer
+      client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
+        //if this is a sync packet reset all our item addresses without changing anything else
+        if (packet.index === 0) {
+          for (let i = 10; i < 20; i++) {
+            gpio[i] = 0;
+          }
+          //for (let flag in item_flags) {
+          //gpio[Math.floor(item_flags[flag][0] / 8)] |= 2^(item_flags[flag][0] % 8)
+          //}
+        }
+        //go through all our item addresses and if they are not set, check the recieved items for their ap id, and set the gpio flag if we recieved it
+        //on the scale i expect pico-8 games to be, this will be good enough
+        for (let flag in item_flags) {
+          let byte = Math.floor(item_flags[flag][0] / 8) + 10;
+          let item_bit = 2 ** (item_flags[flag][0] % 8)
+          //console.log(`flag: ${flag}  gpio byte: ${byte}  gpio data: ${gpio[byte]}  item_bit: ${item_bit}`);
+          if (!(gpio[byte] & item_bit)) {
+            for (let i = 0; i < packet.items.length; i++) {
+              let item = packet.items[i]
+              //console.log(`checking ${flag}: ${base_id + item_flags[flag][1]} === ${item.item}`)
+              if (base_id + item_flags[flag][1] === item.item) {
+                console.log(`adding item ${flag}`)
+                gpio[byte] |= item_bit
+                message_pico8(`got ${flag} from ${players[item.player - 1]}`.toLowerCase())
+              }
             }
           }
         }
-      }
-    });
-    // Connect to the Archipelago server
-    form.addEventListener("submit", (event) => {
-      event.preventDefault()
-      const connectionInfo = {
-        hostname: document.getElementById("hostname").value,
-        port: Number(document.getElementById("port").value),
-        game: "MetroCUBEvania",
-        name: document.getElementById("slot-name").value,
-        items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL,
-        version: {
-          build: 0,
-          major: 5,
-          minor: 0,
-        },
-      };
-      console.log(connectionInfo.hostname)
-      console.log(connectionInfo.port)
-      console.log(connectionInfo.name)
+      });
 
-      const statusWrapper = document.querySelector(".status-wrapper");
-      const connected = document.querySelector(".status-connected");
-      const failed = document.querySelector(".status-failed");
-      const connecting = document.querySelector(".status-connecting");
+      // Connect to the Archipelago server
+      form.addEventListener("submit", (event) => {
+        event.preventDefault()
+        const connectionInfo = {
+          hostname: document.getElementById("hostname").value,
+          port: Number(document.getElementById("port").value),
+          game: "MetroCUBEvania",
+          name: document.getElementById("slot-name").value,
+          items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL,
+          version: {
+            build: 0,
+            major: 5,
+            minor: 0,
+          },
+        };
+        console.log(connectionInfo.hostname)
+        console.log(connectionInfo.port)
+        console.log(connectionInfo.name)
 
-      statusWrapper.classList.remove("d-none");
-      connected.classList.add("d-none");
-      failed.classList.add("d-none");
-      connecting.classList.remove("d-none");
+        const statusWrapper = document.querySelector(".status-wrapper");
+        const connected = document.querySelector(".status-connected");
+        const failed = document.querySelector(".status-failed");
+        const connecting = document.querySelector(".status-connecting");
 
-      client
-        .connect(connectionInfo)
-        .then(() => {
-          console.log("Connected to the server");
-          connecting.classList.add("d-none");
-          connected.classList.remove("d-none");
-          // You are now connected and authenticated to the server. You can add more code here if need be.
-        })
-        .catch((error) => {
-          console.error("Failed to connect:", error);
-          connecting.classList.add("d-none");
-          failed.classList.remove("d-none");
-          // Handle the connection error.
-        });
-    });
+        statusWrapper.classList.remove("d-none");
+        connected.classList.add("d-none");
+        failed.classList.add("d-none");
+        connecting.classList.remove("d-none");
 
-    // add location handler for gpio layer
-    gpio.subscribe(function (newIndices) {
-      for (let loc in loc_flags) {
-        if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
-          if (loc === "victory") {
-            client.updateStatus(CLIENT_STATUS.GOAL)
-          } else {
-            //console.log(`Sending location: ${loc} id: ${base_id + loc_flags[loc][1]}`)
-            client.locations.check(base_id + loc_flags[loc][1])
+        client
+          .connect(connectionInfo)
+          .then(() => {
+            console.log("Connected to the server");
+            connecting.classList.add("d-none");
+            connected.classList.remove("d-none");
+            // You are now connected and authenticated to the server. You can add more code here if need be.
+          })
+          .catch((error) => {
+            console.error("Failed to connect:", error);
+            connecting.classList.add("d-none");
+            failed.classList.remove("d-none");
+            // Handle the connection error.
+          });
+      });
+
+      // add location handler for gpio layer
+      gpio.subscribe(function (newIndices) {
+        for (let loc in loc_flags) {
+          if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
+            if (loc === "victory") {
+              client.updateStatus(CLIENT_STATUS.GOAL)
+            } else {
+              //console.log(`Sending location: ${loc} id: ${base_id + loc_flags[loc][1]}`)
+              client.locations.check(base_id + loc_flags[loc][1])
+            }
           }
         }
-      }
-    });
-  </script>
+      });
+    </script>
   </div>
 </body>
 
