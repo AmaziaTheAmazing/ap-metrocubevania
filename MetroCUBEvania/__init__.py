@@ -3,6 +3,8 @@ from worlds.AutoWorld import World, WebWorld
 #expand this eventually
 from typing import *
 
+from .Options import MCVOptions
+
 json_world = {
     "regions": ["Menu", "main", "grass", "upper ice", "lava", "lower ice"],
     "region_map": {
@@ -97,6 +99,7 @@ item_list = [item for item_lists in json_world["items"].values() for item in ite
 class MCVWorld(World):
     game = json_world["game_name"]
     #web = MCVWeb()
+    options_dataclass = MCVOptions
     location_name_to_id = {name: json_world["base_id"]+location_list.index(name) for name in location_list}
     item_name_to_id = {name: json_world["base_id"]+item_list.index(name) for name in item_list}
 
@@ -136,13 +139,15 @@ class MCVWorld(World):
 
     def get_item_list(self) -> List[str]:
         #current black box to creat a list of item names per count that need to be created
-        return item_list
+        return [item for item in item_list if item not in ["counterfeit medal"]]
         #currently my items in my datapackage should all be created once, so this list functions
 
     def get_item_classification(self, name: str) -> ItemClassification:
         if name in json_world["items"]["prog_items"]:
             return ItemClassification.progression
         elif name in json_world["items"]["filler_items"]:
+            if name in ["starting medal","springboards medal","lava medal","cage medal","ice medal"] and self.options.medal_hunt and False:
+                return ItemClassification.progression
             return ItemClassification.filler
         else:
             return ItemClassification.useful
@@ -180,7 +185,12 @@ class MCVWorld(World):
         for region, location, rule in self.get_location_map():
             loc = MCVLocation(self.player, location, self.location_name_to_id[location], regions[region])
             if rule:
-                loc.access_rule = self.create_rule(rule)
+                print(self.options)
+                if location == "victory" and self.options.medal_hunt and False:# currently disabled
+                    print("-"*10+location,(rule+["starting medal","springboards medal","lava medal","cage medal","ice medal"]))
+                    loc.access_rule = self.create_rule(rule+["starting medal","springboards medal","lava medal","cage medal","ice medal"])
+                else:
+                    loc.access_rule = self.create_rule(rule)
             regions[region].locations.append(loc)
 
         self.set_victory()
@@ -200,3 +210,11 @@ class MCVWorld(World):
     def create_item(self, name: str) -> "Item":
         item_class = self.get_item_classification(name)
         return MCVItem(name, item_class, self.item_name_to_id.get(name, None), self.player)
+
+    def fill_slot_data(self):
+        return {
+        "MedalHunt": False,#self.options.medal_hunt
+        "ExtraCheckpoint": self.options.extra_checkpoint.value,
+        "DeathLink": self.options.death_link.value,
+        "DeathLink_Amnesty": self.options.death_link_amnesty.value,
+        }
