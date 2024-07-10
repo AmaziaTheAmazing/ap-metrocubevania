@@ -284,9 +284,18 @@
 
       client.addListener(SERVER_PACKET_TYPE.BOUNCED, (packet) =>{
         console.log("Bounced ", packet);
-		if (packet.tags == COMMON_TAGS.DEATH_LINK & options.DeathLink != 0) {
+		if (packet.tags == COMMON_TAGS.DEATH_LINK && options.DeathLink != 0 && packet.data.source != thisPlayer) {
 			gpio[25] = gpio[25] | 1;
 			DeathLink_Amnesty += 1;
+      if (packet.data.source) {
+        if (players[packet.data.source].alias == ""){
+          message_pico8(`deathlinked by ${players[packet.data.source].name}`.toLowerCase());
+        } else {
+          message_pico8(`deathlinked by ${players[packet.data.source].alias}`.toLowerCase());
+        }
+      } else {
+        message_pico8("deathlinked");
+      }
 		}		
       });
 
@@ -358,11 +367,14 @@
         if (options.DeathLink != 0 && (gpio[25] & 2) != 0) {
           console.log("Death");
           gpio[25] = gpio[25] - 2;
-		  DeathLink_Amnesty -= 1;
-		  if (DeathLink_Amnesty == 0){
-			client.send({ cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DEATH_LINK });
-			DeathLink_Amnesty = options.DeathLink_Amnesty;
-		  }
+		      DeathLink_Amnesty -= 1;
+		      if (DeathLink_Amnesty == 0){
+            DeathLink_Amnesty = options.DeathLink_Amnesty;
+            client.send({ cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DEATH_LINK, data: {"source": thisPlayer}});
+            if (options.DeathLink_Amnesty > 1) {
+              message_pico8("sent deathlink")
+            }
+		      }
         }
         for (let loc in loc_flags) {
           if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
