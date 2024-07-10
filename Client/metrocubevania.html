@@ -200,6 +200,8 @@
 
       let thisPlayer = 0;
       let players = {};
+	  
+	  let DeathLink_Amnesty = 0;
 
       function message_pico8(message) {
         let index = 37;
@@ -228,6 +230,8 @@
         let optionsByte=1;
         if (options.DeathLink != 0) {
           optionsByte += 2;
+		  client.send({ cmd: CLIENT_PACKET_TYPE.CONNECT_UPDATE, tags: COMMON_TAGS.DEATH_LINK });
+		  DeathLink_Amnesty = options.DeathLink_Amnesty;
         }
         if (options.MedalHunt) {
           optionsByte += 4;
@@ -280,6 +284,10 @@
 
       client.addListener(SERVER_PACKET_TYPE.BOUNCED, (packet) =>{
         console.log("Bounced ", packet);
+		if (packet.tags == COMMON_TAGS.DEATH_LINK & options.DeathLink != 0) {
+			gpio[25] = gpio[25] | 1;
+			DeathLink_Amnesty += 1;
+		}		
       });
 
       //add location info listener to give game sent item text
@@ -350,7 +358,11 @@
         if (options.DeathLink != 0 && (gpio[25] & 2) != 0) {
           console.log("Death");
           gpio[25] = gpio[25] - 2;
-          //client.send({cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DeathLinkData});
+		  DeathLink_Amnesty -= 1;
+		  if (DeathLink_Amnesty == 0){
+			client.send({ cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DEATH_LINK });
+			DeathLink_Amnesty = options.DeathLink_Amnesty;
+		  }
         }
         for (let loc in loc_flags) {
           if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
