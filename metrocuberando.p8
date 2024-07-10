@@ -32,6 +32,9 @@ function die()
  dead=15
  deaths+=1
  canmove=false
+ if ap_do_deathlink then
+     poke(0x5f80+25, peek(0x5f80+25) | 2)
+ end
  sfx(1)
 end
 
@@ -247,6 +250,9 @@ function _init()
  menu=1
  ap_msg_text=""
  ap_msg_time=0
+ ap_has_options=false
+ ap_do_deathlink=false
+ ap_medal_hunt=false
  map_init()
 end
 
@@ -367,6 +373,11 @@ if canmove then
 			end
 		end
      end
+ end
+
+ --check to clear medal hunt wall
+ if ap_medal_hunt then
+
  end
 
  
@@ -943,6 +954,7 @@ function _draw()
   end
 
   --check gpio
+  ap_load_options()
   ap_recieve_items()
   ap_read_message()
 
@@ -950,6 +962,13 @@ function _draw()
   if ap_msg_time > 0 then
      ap_display_msg()
      ap_msg_time -= 1
+  end
+
+  if ap_do_deathlink then
+     if (peek(0x5f80+25) & 1) ~= 0 then
+          poke(0x5f80+25, peek(0x5f80+25)-1)
+          die()
+     end
   end
   
   -- ending
@@ -1055,25 +1074,56 @@ function ap_recieve_items()
                     power[id] = true
                else
                     medal += 1
+                    if ap_medal_hunt and medal > 4 then
+                         mset(110,27,0)
+                         mset(110,28,0)
+                         mset(110,29,0)
+                         ap_medal_hunt = false
+                    end
                end
                items[item] = nil
           end
      end
 end
 
+function ap_load_options()
+     --gpio bytes 20-24 are for options
+     --byte 20 bit 1 is set to 1 when ap sends options on connection
+     gpio_adr = 0x5f80
+     if ap_has_options then return end
+     if (peek(gpio_adr + 20) & 1) ~= 0 then
+          ap_has_options = true
+          if (peek(gpio_adr + 20) & 2) ~= 0 then
+               ap_do_deathlink = true
+          end
+          if (peek(gpio_adr + 20) & 2) ~= 0 then
+               ap_medal_hunt = true
+               --setup medal hunt wall
+               mset(110,27,31)
+               mset(110,28,31)
+               mset(110,29,31)
+          end
+          if (peek(gpio_adr + 20) & 4) ~= 0 then
+               mset(78,8,39)
+          end
+     end
+end
+
 function ap_read_message()
-     --reads gpio bytes 20-127 as characters and prints out as text
+     --reads gpio bytes 37-127 as characters and prints out as text
      msg = ""
-     for i=20,127 do
-          bank = peek(0x5f80 + i)
+     for i=0,90 do
+          bank = peek(0x5f80 + i + 27)
           if bank == 0 then
                break
+          end
+          if i%30 == 0 and i ~= 0 then
+               msg = msg.."\n"
           end
           --turn byte into character
           msg = msg..chr(bank)
           poke(0x5f80 + i, 0)
      end
-     --todo modify message
 
      if msg ~= "" then
           ap_msg_text = msg

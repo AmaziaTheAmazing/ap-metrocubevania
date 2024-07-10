@@ -159,6 +159,7 @@
         SERVER_PACKET_TYPE,
         CLIENT_STATUS,
         CLIENT_PACKET_TYPE,
+        CREATE_AS_HINT_MODE,
       } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
       // Create a new Archipelago client
@@ -193,7 +194,10 @@
       };
       const base_id = 19828412012;
 
-      let players = [];
+      let checked_locations = [];
+
+      let thisPlayer = 0;
+      let players = {};
 
       function message_pico8(message) {
         let index = 20;
@@ -202,20 +206,24 @@
           gpio[index] = message[i].charCodeAt(0);
           log += message[i].charCodeAt(0).toString(2) + " ";
           index++;
-          if (i % 30 === 29) {
-            gpio[index] = 10//"\n".charCodeAt(0).toString(2);
-            log += message[i].charCodeAt(0).toString(2);
-            index++;
-          }
         }
       }
 
       // Set up event listeners
       client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet) => {
         console.log("Connected to server: ", packet);
-        players = packet.players.map(player => {
-          return player.name;
-        });
+        // players = packet.players.map(player => {
+        //   return player.name;
+        // });
+        thisPlayer = packet.slot;
+        for (let slot in packet.slot_info) {
+          players[slot] = {
+            "slot": slot,
+            "name": packet.slot_info[slot].name,
+            "alias": "".concat(packet.players[slot-1].alias.split(" ").slice(0,-1)),
+            "game": packet.slot_info[slot].game,
+          }
+        }
         client.send({ cmd: CLIENT_PACKET_TYPE.SYNC });
       });
 
@@ -230,25 +238,44 @@
           for (let i = 10; i < 20; i++) {
             gpio[i] = 0;
           }
-          //for (let flag in item_flags) {
-          //gpio[Math.floor(item_flags[flag][0] / 8)] |= 2^(item_flags[flag][0] % 8)
-          //}
         }
         //go through all our item addresses and if they are not set, check the recieved items for their ap id, and set the gpio flag if we recieved it
         //on the scale i expect pico-8 games to be, this will be good enough
         for (let flag in item_flags) {
           let byte = Math.floor(item_flags[flag][0] / 8) + 10;
           let item_bit = 2 ** (item_flags[flag][0] % 8)
-          //console.log(`flag: ${flag}  gpio byte: ${byte}  gpio data: ${gpio[byte]}  item_bit: ${item_bit}`);
           if (!(gpio[byte] & item_bit)) {
             for (let i = 0; i < packet.items.length; i++) {
               let item = packet.items[i]
-              //console.log(`checking ${flag}: ${base_id + item_flags[flag][1]} === ${item.item}`)
               if (base_id + item_flags[flag][1] === item.item) {
                 console.log(`adding item ${flag}`)
                 gpio[byte] |= item_bit
-                message_pico8(`got ${flag} from ${players[item.player - 1]}`.toLowerCase())
+                if (item.player == thisPlayer){
+                  message_pico8(`found ${flag}`.toLowerCase())
+                } else {
+                  if (players[item.player].alias == ""){
+                    message_pico8(`got ${flag} from ${players[item.player].name}`.toLowerCase())
+                  } else {
+                    message_pico8(`got ${flag} from ${players[item.player].alias}`.toLowerCase())
+                  }
+                }
               }
+            }
+          }
+        }
+      });
+
+      //add location info listener to give game sent item text
+      client.addListener(SERVER_PACKET_TYPE.LOCATION_INFO, (packet, message) => {
+        console.log("Location Info: ", packet);
+        for (let i=0; i<packet.locations.length; i++){
+          let location = packet.locations[i];
+          if (location.player != thisPlayer) {
+            let itemName = client.items.name(players[location.player].game, location.item)
+            if (players[location.player].alias == "") {
+              message_pico8(`sent ${itemName} to ${players[location.player].name}`.toLowerCase());
+            } else {
+              message_pico8(`sent ${itemName} to ${players[location.player].alias}`.toLowerCase());
             }
           }
         }
@@ -269,9 +296,9 @@
             minor: 0,
           },
         };
-        console.log(connectionInfo.hostname)
-        console.log(connectionInfo.port)
-        console.log(connectionInfo.name)
+        console.log(connectionInfo.hostname);
+        console.log(connectionInfo.port);
+        console.log(connectionInfo.name);
 
         const statusWrapper = document.querySelector(".status-wrapper");
         const connected = document.querySelector(".status-connected");
@@ -300,14 +327,19 @@
       });
 
       // add location handler for gpio layer
+      // sending information to the pico8 will trigger this function sending all checks to ap again
+      // if you always send information to the pico8 when the gpio updates, that can cause an infinite loop
       gpio.subscribe(function (newIndices) {
         for (let loc in loc_flags) {
           if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
             if (loc === "victory") {
-              client.updateStatus(CLIENT_STATUS.GOAL)
+              client.updateStatus(CLIENT_STATUS.GOAL);
             } else {
-              //console.log(`Sending location: ${loc} id: ${base_id + loc_flags[loc][1]}`)
-              client.locations.check(base_id + loc_flags[loc][1])
+              client.locations.check(base_id + loc_flags[loc][1]);
+              if (!checked_locations.includes(base_id + loc_flags[loc][1], 0)){
+                client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, base_id + loc_flags[loc][1]);
+              }
+              checked_locations.push(base_id + loc_flags[loc][1]);
             }
           }
         }
