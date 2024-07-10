@@ -1113,7 +1113,7 @@ function ap_read_message()
      --reads gpio bytes 37-127 as characters and prints out as text
      msg = ""
      for i=0,90 do
-          bank = peek(0x5f80 + i + 27)
+          bank = peek(0x5f80 + i + 37)
           if bank == 0 then
                break
           end
@@ -1122,7 +1122,7 @@ function ap_read_message()
           end
           --turn byte into character
           msg = msg..chr(bank)
-          poke(0x5f80 + i, 0)
+          poke(0x5f80 + i + 37, 0)
      end
 
      if msg ~= "" then
