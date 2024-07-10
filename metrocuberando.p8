@@ -1096,14 +1096,14 @@ function ap_load_options()
           if (peek(gpio_adr + 20) & 2) ~= 0 then
                ap_do_deathlink = true
           end
-          if (peek(gpio_adr + 20) & 2) ~= 0 then
+          if (peek(gpio_adr + 20) & 4) ~= 0 then
                ap_medal_hunt = true
                --setup medal hunt wall
                mset(110,27,31)
                mset(110,28,31)
                mset(110,29,31)
           end
-          if (peek(gpio_adr + 20) & 4) ~= 0 then
+          if (peek(gpio_adr + 20) & 8) ~= 0 then
                mset(78,8,39)
           end
      end
