@@ -160,6 +160,7 @@
         CLIENT_STATUS,
         CLIENT_PACKET_TYPE,
         CREATE_AS_HINT_MODE,
+        COMMON_TAGS,
       } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
       // Create a new Archipelago client
@@ -195,16 +196,17 @@
       const base_id = 19828412012;
 
       let checked_locations = [];
+      let options = {}
 
       let thisPlayer = 0;
       let players = {};
 
       function message_pico8(message) {
-        let index = 20;
-        let log = "";
+        let index = 37;
+        //let log = "";
         for (let i = 0; i < message.length; i++) {
           gpio[index] = message[i].charCodeAt(0);
-          log += message[i].charCodeAt(0).toString(2) + " ";
+          //log += message[i].charCodeAt(0).toString(2) + " ";
           index++;
         }
       }
@@ -212,18 +214,29 @@
       // Set up event listeners
       client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet) => {
         console.log("Connected to server: ", packet);
-        // players = packet.players.map(player => {
-        //   return player.name;
-        // });
         thisPlayer = packet.slot;
         for (let slot in packet.slot_info) {
           players[slot] = {
-            "slot": slot,
+            "slot": parseInt(slot),
             "name": packet.slot_info[slot].name,
             "alias": "".concat(packet.players[slot-1].alias.split(" ").slice(0,-1)),
             "game": packet.slot_info[slot].game,
           }
         }
+        // set up gpio options
+        options = client.data.slotData;
+        let optionsByte=1;
+        if (options.DeathLink != 0) {
+          optionsByte += 2;
+        }
+        if (options.MedalHunt) {
+          optionsByte += 4;
+        }
+        if (options.ExtraCheckpoint) {
+          optionsByte += 8;
+        }
+        gpio[20] = optionsByte;
+
         client.send({ cmd: CLIENT_PACKET_TYPE.SYNC });
       });
 
@@ -263,6 +276,10 @@
             }
           }
         }
+      });
+
+      client.addListener(SERVER_PACKET_TYPE.BOUNCED, (packet) =>{
+        console.log("Bounced ", packet);
       });
 
       //add location info listener to give game sent item text
@@ -330,6 +347,11 @@
       // sending information to the pico8 will trigger this function sending all checks to ap again
       // if you always send information to the pico8 when the gpio updates, that can cause an infinite loop
       gpio.subscribe(function (newIndices) {
+        if (options.DeathLink != 0 && (gpio[25] & 2) != 0) {
+          console.log("Death");
+          gpio[25] = gpio[25] - 2;
+          //client.send({cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DeathLinkData});
+        }
         for (let loc in loc_flags) {
           if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
             if (loc === "victory") {
