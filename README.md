@@ -1,4 +1,4 @@
-Source game from FlytraoStudios: MetroCUBEvania - https://www.lexaloffle.com/bbs/?pid=48475
+Source game from FlytrapStudios: MetroCUBEvania - https://www.lexaloffle.com/bbs/?pid=48475
 
 License inherited from MetroCUBEvania - https://creativecommons.org/licenses/by-nc-sa/4.0/
 
