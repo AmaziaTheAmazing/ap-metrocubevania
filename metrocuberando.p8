@@ -1134,10 +1134,10 @@ end
 function ap_display_msg()
      for i=-1,1 do
           for j=-1,1 do
-               print(ap_msg_text,i+room_x*128+5,j+(room_y+1)*128-min(6,ap_msg_time/4),0)
+               print(ap_msg_text,i+room_x*128+5,j+(room_y+1)*128-min(6*(#ap_msg_text\30+1),ap_msg_time/4),0)
           end
      end
-     print(ap_msg_text, room_x*128+5, (room_y+1)*128-min(6,ap_msg_time/4), 7)
+     print(ap_msg_text, room_x*128+5, (room_y+1)*128-min(6*(#ap_msg_text\30+1),ap_msg_time/4), 7)
 end
 __gfx__
 000000004444444422222222000000000008800077777a7a994219447777c7cc0777c7c0000000007777c7cc000000000077770000aaaa000000000000000000
