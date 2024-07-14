@@ -69,7 +69,7 @@
 
 
             <!-- display after first layout update -->
-            <div id="touch_controls_gfx" style=" pointer-events:none; display:table; 
+            <div id="touch_controls_gfx" style=" pointer-events:none; display:table;
                    position:fixed; top:0px; left:0px; border:0; width:100vw; height:100vh">
               <img src="" id="controls_right_panel" style="position:absolute; opacity:0.5;">
               <img src="" id="controls_left_panel" style="position:absolute;  opacity:0.5;">
@@ -112,7 +112,7 @@
       }
 
       // pointer lock request needs to be inside a canvas interaction event
-      // pico8_state.request_pointer_lock is true when 0x5f2d bit 0 and bit 2 are set -- poke(0x5f2d,0x5) 
+      // pico8_state.request_pointer_lock is true when 0x5f2d bit 0 and bit 2 are set -- poke(0x5f2d,0x5)
       // note on mouse acceleration for future: // https://github.com/w3c/pointerlock/pull/49
       canvas.addEventListener("click", function () {
         if (!p8_touch_detected)
@@ -124,8 +124,8 @@
 
     <!-- end pico cart -->
 
-      <form id="connection_details">
     <div class="row">
+      <form id="connection-details">
         <div class="input-group input-group-sm mb-2">
           <label class="input-group-text" for="hostname">Hostname:</label>
           <input class="form-control" type="text" id="hostname" name="Hostname" value="archipelago.gg">
@@ -165,7 +165,7 @@
 
       // Create a new Archipelago client
       const client = new Client();
-      const form = document.getElementById("connection_details")
+      const form = document.querySelector("#connection-details")
 
       //pico-8 related declarations
       const gpio = getP8Gpio();
@@ -200,8 +200,8 @@
 
       let thisPlayer = 0;
       let players = {};
-	  
-	  let DeathLink_Amnesty = 0;
+
+      let DeathLink_Amnesty = 0;
 
       function message_pico8(message) {
         let index = 37;
@@ -228,10 +228,10 @@
         // set up gpio options
         options = client.data.slotData;
         let optionsByte=1;
-        if (options.DeathLink != 0) {
+        if (options.DeathLink !== 0) {
           optionsByte += 2;
-		  client.send({ cmd: CLIENT_PACKET_TYPE.CONNECT_UPDATE, tags: COMMON_TAGS.DEATH_LINK });
-		  DeathLink_Amnesty = options.DeathLink_Amnesty;
+          client.send({ cmd: CLIENT_PACKET_TYPE.CONNECT_UPDATE, tags: COMMON_TAGS.DEATH_LINK });
+          DeathLink_Amnesty = options.DeathLink_Amnesty;
         }
         if (options.MedalHunt) {
           optionsByte += 4;
@@ -261,16 +261,16 @@
         for (let flag in item_flags) {
           let byte = Math.floor(item_flags[flag][0] / 8) + 10;
           let item_bit = 2 ** (item_flags[flag][0] % 8)
-          if (!(gpio[byte] & item_bit)) {
+          if (!(gpio[byte] && item_bit)) {
             for (let i = 0; i < packet.items.length; i++) {
               let item = packet.items[i]
               if (base_id + item_flags[flag][1] === item.item) {
                 console.log(`adding item ${flag}`)
                 gpio[byte] |= item_bit
-                if (item.player == thisPlayer){
+                if (item.player === thisPlayer){
                   message_pico8(`found ${flag}`.toLowerCase())
                 } else {
-                  if (players[item.player].alias == ""){
+                  if (players[item.player].alias === ""){
                     message_pico8(`got ${flag} from ${players[item.player].name}`.toLowerCase())
                   } else {
                     message_pico8(`got ${flag} from ${players[item.player].alias}`.toLowerCase())
@@ -284,19 +284,19 @@
 
       client.addListener(SERVER_PACKET_TYPE.BOUNCED, (packet) =>{
         console.log("Bounced ", packet);
-		if (packet.tags == COMMON_TAGS.DEATH_LINK && options.DeathLink != 0 && packet.data.source != thisPlayer) {
-			gpio[25] = gpio[25] | 1;
-			DeathLink_Amnesty += 1;
-      if (packet.data.source) {
-        if (players[packet.data.source].alias == ""){
-          message_pico8(`deathlinked by ${players[packet.data.source].name}`.toLowerCase());
-        } else {
-          message_pico8(`deathlinked by ${players[packet.data.source].alias}`.toLowerCase());
+        if (packet.tags === COMMON_TAGS.DEATH_LINK && options.DeathLink !== 0 && packet.data.source !== thisPlayer) {
+          gpio[25] = gpio[25] | 1;
+          DeathLink_Amnesty += 1;
+          if (packet.data.source) {
+            if (players[packet.data.source].alias === ""){
+              message_pico8(`deathlinked by ${players[packet.data.source].name}`.toLowerCase());
+            } else {
+              message_pico8(`deathlinked by ${players[packet.data.source].alias}`.toLowerCase());
+            }
+          } else {
+            message_pico8("deathlinked");
+          }
         }
-      } else {
-        message_pico8("deathlinked");
-      }
-		}		
       });
 
       //add location info listener to give game sent item text
@@ -304,9 +304,9 @@
         console.log("Location Info: ", packet);
         for (let i=0; i<packet.locations.length; i++){
           let location = packet.locations[i];
-          if (location.player != thisPlayer) {
+          if (location.player !== thisPlayer) {
             let itemName = client.items.name(players[location.player].game, location.item)
-            if (players[location.player].alias == "") {
+            if (players[location.player].alias === "") {
               message_pico8(`sent ${itemName} to ${players[location.player].name}`.toLowerCase());
             } else {
               message_pico8(`sent ${itemName} to ${players[location.player].alias}`.toLowerCase());
@@ -364,17 +364,17 @@
       // sending information to the pico8 will trigger this function sending all checks to ap again
       // if you always send information to the pico8 when the gpio updates, that can cause an infinite loop
       gpio.subscribe(function (newIndices) {
-        if (options.DeathLink != 0 && (gpio[25] & 2) != 0) {
+        if (options.DeathLink !== 0 && (gpio[25] & 2) !== 0) {
           console.log("Death");
           gpio[25] = gpio[25] - 2;
-		      DeathLink_Amnesty -= 1;
-		      if (DeathLink_Amnesty == 0){
+              DeathLink_Amnesty -= 1;
+              if (DeathLink_Amnesty === 0){
             DeathLink_Amnesty = options.DeathLink_Amnesty;
             client.send({ cmd: CLIENT_PACKET_TYPE.BOUNCE, tags: COMMON_TAGS.DEATH_LINK, data: {"source": thisPlayer}});
             if (options.DeathLink_Amnesty > 1) {
               message_pico8("sent deathlink")
             }
-		      }
+              }
         }
         for (let loc in loc_flags) {
           if ((gpio[Math.floor(loc_flags[loc][0] / 8)] & 2 ** (loc_flags[loc][0] % 8)) !== 0) {
