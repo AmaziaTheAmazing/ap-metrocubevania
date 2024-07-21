@@ -52,6 +52,10 @@ function room_update()
   and not mus_played[i] then
    music(i)
    mus_played[i]=true
+   if ap_extra_locs then
+     e_locs = ["enter crossprings", "enter lava", "enter upper ice", "enter lower ice"]
+     ap_send_loc(e_locs[i])
+   end
   end
  end
  
@@ -253,6 +257,7 @@ function _init()
  ap_has_options=false
  ap_do_deathlink=false
  ap_medal_hunt=false
+ ap_extra_locs=false
  map_init()
 end
 
@@ -374,12 +379,6 @@ if canmove then
 		end
      end
  end
-
- --check to clear medal hunt wall
- if ap_medal_hunt then
-
- end
-
  
  if mget(px,py)==39 then
   checkpoint()
@@ -1041,6 +1040,10 @@ locs = {--valid ids 0-79
      ["medal 4"]=7,
      ["medal 5"]=8,
      ["victory"]=9,
+     ["enter crossprings"]=10,
+     ["enter upper ice"]=11,
+     ["enter lava"]=12,
+     ["enter lower ice"]=13,
 }
 
 items = {--valid ids 0-79
@@ -1105,6 +1108,9 @@ function ap_load_options()
           end
           if (peek(gpio_adr + 20) & 8) ~= 0 then
                mset(78,8,39)
+          end
+          if (peek(gpio_adr + 20) & 16) ~= 0 then
+               ap_extra_locs = true
           end
      end
 end

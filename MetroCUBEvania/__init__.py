@@ -12,7 +12,7 @@ json_world = {
             "main": None
         },
         "main": {
-            "grass": ["springboards OR double jump"],
+            "grass": "springboards OR double jump",
             "upper ice": ["double jump"],
         },
         "grass": {
@@ -32,29 +32,35 @@ json_world = {
         },
 
         "grass": {
+            "Enter Crossprings": None,
             "Double Jump": None, #gives double jump
             "Cage Medal": ["key"],
         },
 
         "upper ice": {
+            "Enter Upper Ice": None,
             "Dive": None,
         },
 
         "lava": {
+            "Enter Lava": None,
             "Lava Medal": None,
             "Key": None,
         },
         "lower ice": {
+            "Enter Lower Ice": None,
             "Ice Medal": None,
             "victory": ["dive"],
         },
     },
     "items": {
         "prog_items": [
-            "springboards",
             "double jump",
             "dive",
             "key",
+        ],
+        "useful_items": [
+            "springboards",
         ],
         "filler_items": [
             "starting medal",
@@ -119,7 +125,10 @@ class MCVWorld(World):
             return [(region1, region2, rule) for region1, connections in json_world["region_map"].items() for region2, rule in connections.items()]
 
     def get_location_map(self) -> "List[Tuple(str, str, Optional[Any])]":
-        return [(region, location, rule) for region, placements in json_world["location_map"].items() for location, rule in placements.items()]
+        exclude = []
+        if not self.options.extra_checks.value:
+            exclude += ["Enter Crossprings", "Enter Upper Ice", "Enter Lava", "Enter Lower Ice"]
+        return [(region, location, rule) for region, placements in json_world["location_map"].items() for location, rule in placements.items() if location not in exclude]
 
 # black box methods
     def set_victory(self) -> None:
@@ -146,7 +155,7 @@ class MCVWorld(World):
         if name in json_world["items"]["prog_items"]:
             return ItemClassification.progression
         elif name in json_world["items"]["filler_items"]:
-            if name in ["starting medal","springboards medal","lava medal","cage medal","ice medal"] and self.options.medal_hunt and False:
+            if name in ["starting medal","springboards medal","lava medal","cage medal","ice medal"] and self.options.medal_hunt.value:
                 return ItemClassification.progression
             return ItemClassification.filler
         else:
@@ -185,9 +194,7 @@ class MCVWorld(World):
         for region, location, rule in self.get_location_map():
             loc = MCVLocation(self.player, location, self.location_name_to_id[location], regions[region])
             if rule:
-                print(self.options)
-                if location == "victory" and self.options.medal_hunt and False:# currently disabled
-                    print("-"*10+location,(rule+["starting medal","springboards medal","lava medal","cage medal","ice medal"]))
+                if location == "victory" and self.options.medal_hunt.value:
                     loc.access_rule = self.create_rule(rule+["starting medal","springboards medal","lava medal","cage medal","ice medal"])
                 else:
                     loc.access_rule = self.create_rule(rule)
@@ -206,6 +213,8 @@ class MCVWorld(World):
         while len(itempool) < total_locations:
             itempool.append(self.create_filler())
         self.multiworld.itempool += itempool
+        early = self.multiworld.random.choice(["springboards", "double jump"])
+        self.multiworld.early_items[self.player][early] = 1
 
     def create_item(self, name: str) -> "Item":
         item_class = self.get_item_classification(name)
@@ -213,7 +222,8 @@ class MCVWorld(World):
 
     def fill_slot_data(self):
         return {
-        "MedalHunt": False,#self.options.medal_hunt
+        "ExtraChecks": self.options.extra_checks.value,
+        "MedalHunt": self.options.medal_hunt.value,
         "ExtraCheckpoint": self.options.extra_checkpoint.value,
         "DeathLink": self.options.death_link.value,
         "DeathLink_Amnesty": self.options.death_link_amnesty.value,

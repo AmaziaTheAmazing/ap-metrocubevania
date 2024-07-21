@@ -3,6 +3,10 @@ import typing
 from dataclasses import dataclass
 from Options import DeathLink, Toggle, Range, PerGameCommonOptions
 
+class ExtraChecks(Toggle):
+	"""Adds 4 extra locations which are checked by reaching points in the game where jingles are played"""
+	display_name = "Extra Checks"
+
 class MedalHunt(Toggle):
 	"""Whether you must collect all 5 medal items before the route to the boss opens. Currently disabled"""
 	display_name = "Medal Hunt"
@@ -21,6 +25,7 @@ class DeathLinkAmnesty(Range):
 
 @dataclass
 class MCVOptions(PerGameCommonOptions):
+	extra_checks: ExtraChecks
 	medal_hunt: MedalHunt
 	extra_checkpoint: ExtraCheckpoint
 	death_link: DeathLink

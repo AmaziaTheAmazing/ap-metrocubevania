@@ -177,15 +177,19 @@
       const gpio = getP8Gpio();
       const loc_flags = {
         "Springboards": [0, 1],
-        "Double Jump": [1, 3],
-        "Dive": [2, 5],
-        "Key": [3, 7],
+        "Double Jump": [1, 4],
+        "Dive": [2, 7],
+        "Key": [3, 10],
         "Starting Medal": [4, 0],
         "Springboards Medal": [5, 2],
-        "Lava Medal": [6, 6],
-        "Cage Medal": [7, 4],
-        "Ice Medal": [8, 8],
-        "victory": [9, 9],
+        "Lava Medal": [6, 9],
+        "Cage Medal": [7, 5],
+        "Ice Medal": [8, 12],
+        "victory": [9, 13],
+        "Enter Crossprings": [10, 3],
+        "Enter Upper Ice": [11, 6],
+        "Enter Lava": [12, 8],
+        "Enter Lower Ice": [13, 11],
       };
 
       const item_flags = {
@@ -214,7 +218,6 @@
         //let log = "";
         for (let i = 0; i < message.length; i++) {
           gpio[index] = message[i].charCodeAt(0);
-          //log += message[i].charCodeAt(0).toString(2) + " ";
           index++;
         }
       }
@@ -244,6 +247,9 @@
         }
         if (options.ExtraCheckpoint) {
           optionsByte += 8;
+        }
+        if (options.ExtraChecks) {
+          optionsByte += 16;
         }
         gpio[20] = optionsByte;
 
