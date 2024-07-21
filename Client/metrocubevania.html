@@ -193,10 +193,10 @@
       };
 
       const item_flags = {
-        "springboards": [0, 0],
-        "double jump": [1, 1],
-        "dive": [2, 2],
-        "key": [3, 3],
+        "springboards": [0, 3],
+        "double jump": [1, 0],
+        "dive": [2, 1],
+        "key": [3, 2],
         "starting medal": [4, 4],
         "springboards medal": [5, 5],
         "lava medal": [6, 6],
@@ -262,6 +262,7 @@
 
       //add item handler for gpio layer
       client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
+        console.log("Recieved items: ", packet);
         //if this is a sync packet reset all our item addresses without changing anything else
         if (packet.index === 0) {
           for (let i = 10; i < 20; i++) {
@@ -270,16 +271,29 @@
         }
         //go through all our item addresses and if they are not set, check the recieved items for their ap id, and set the gpio flag if we recieved it
         //on the scale i expect pico-8 games to be, this will be good enough
-        for (let flag in item_flags) {
-          let byte = Math.floor(item_flags[flag][0] / 8) + 10;
-          let item_bit = 2 ** (item_flags[flag][0] % 8)
-          if (!(gpio[byte] && item_bit)) {
-            for (let i = 0; i < packet.items.length; i++) {
-              let item = packet.items[i]
-              if (base_id + item_flags[flag][1] === item.item) {
-                console.log(`adding item ${flag}`)
-                gpio[byte] |= item_bit
-                if (item.player === thisPlayer){
+        //console.log(`gpio: ${gpio}`)
+        for (let i = 0; i < packet.items.length; i++) {
+          let item = packet.items[i];
+          if (item.item === base_id+9) {
+            if (item.player === thisPlayer) {
+              message_pico8("found counterfeit medal :(");
+            } else {
+              if (players[item.player].alias === ""){
+                message_pico8(`got counterfeit medal from ${players[item.player].name} :(`.toLowerCase())
+              } else {
+                message_pico8(`got counterfeit medal from ${players[item.player].alias} :(`.toLowerCase())
+              }
+            }
+          }
+          for (let flag in item_flags) {
+            if (base_id + item_flags[flag][1] === item.item) {
+              let byte = Math.floor(item_flags[flag][0] / 8) + 10;
+              let item_bit = 2 ** (item_flags[flag][0] % 8);
+              if (gpio[byte] & item_bit) {//yes this is supposed to be bitwise and
+                console.log(`${flag} has already been received`);
+              } else {
+                gpio[byte] |= item_bit;
+                if (item.player === thisPlayer) {
                   message_pico8(`found ${flag}`.toLowerCase())
                 } else {
                   if (players[item.player].alias === ""){
@@ -394,6 +408,7 @@
             if (loc === "victory") {
               client.updateStatus(CLIENT_STATUS.GOAL);
             } else {
+              console.log(`Checking location id: ${base_id + loc_flags[loc][1]}`)
               client.locations.check(base_id + loc_flags[loc][1]);
               if (!checked_locations.includes(base_id + loc_flags[loc][1], 0)){
                 client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, base_id + loc_flags[loc][1]);
