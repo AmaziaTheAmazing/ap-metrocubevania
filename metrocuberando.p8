@@ -3,6 +3,7 @@ version 42
 __lua__
 -- metrocubevania
 -- by flytrap studios
+-- rando cart ver b
 
 function print_centered(str,x,y,col)
  print(str,x-#str*2,y-3,col)
