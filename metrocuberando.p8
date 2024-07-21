@@ -54,7 +54,7 @@ function room_update()
    music(i)
    mus_played[i]=true
    if ap_extra_locs then
-     e_locs = ["enter crossprings", "enter lava", "enter upper ice", "enter lower ice"]
+     e_locs = {"enter crossprings", "enter lava", "enter upper ice", "enter lower ice"}
      ap_send_loc(e_locs[i])
    end
   end
