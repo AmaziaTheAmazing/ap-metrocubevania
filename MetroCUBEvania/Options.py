@@ -8,7 +8,7 @@ class ExtraChecks(Toggle):
 	display_name = "Extra Checks"
 
 class MedalHunt(Toggle):
-	"""Whether you must collect all 5 medal items before the route to the boss opens. Currently disabled"""
+	"""Whether you must collect all 5 medal items before the route to the boss opens."""
 	display_name = "Medal Hunt"
 
 class ExtraCheckpoint(Toggle):
