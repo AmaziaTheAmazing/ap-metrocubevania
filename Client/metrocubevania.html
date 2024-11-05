@@ -123,8 +123,10 @@
     </script>
 
     <!-- end pico cart -->
-
-    <div class="row">
+    <div class="toggle-login-form row mb-2 d-none">
+      <button type="button" class="btn btn-secondary btn-sm">Show/Hide Connection Details</button>
+    </div>
+    <div class="login-form row">
       <form id="connection-details">
         <div class="input-group input-group-sm mb-2">
           <label class="input-group-text" for="hostname">Hostname:</label>
@@ -378,6 +380,13 @@
             connecting.classList.add("d-none");
             connected.classList.remove("d-none");
             // You are now connected and authenticated to the server. You can add more code here if need be.
+            const toggle = document.querySelector('.toggle-login-form');
+            const loginForm = document.querySelector('.login-form');
+            toggle.addEventListener('click', () => {
+              loginForm.classList.toggle('d-none', !loginForm.classList.contains('d-none'));
+            });
+            loginForm.classList.add('d-none');
+            toggle.classList.remove('d-none');
           })
           .catch((error) => {
             console.error("Failed to connect:", error);
