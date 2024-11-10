@@ -23,3 +23,4 @@ jobs:
         run: |
           gh release upload ${{ github.event.release.tag_name }} Client.zip
           gh release upload ${{ github.event.release.tag_name }} MetroCUBEvania.apworld
+          gh release upload ${{ github.event.release.tag_name }} MetroCUBEvania.yaml
