@@ -12,17 +12,17 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="d-flex justify-content-center" style="padding:0px; margin:0px; background-color:#222; color:#ccc">
-  <div class="row" id="body_0" style="width:512px">
+<body class="d-flex justify-content-center" style="background-color:#222; color:#ccc">
+  <div id="body_0" style="width:540px">
     <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
 
 
     <!-- Add any content above the cart here -->
 
 
-    <div id="p8_frame_0" style="max-width:800px; max-height:800px; margin:auto;">
+    <div class="row" id="p8_frame_0" style="max-width:800px; max-height:800px; margin:auto;">
       <!-- double function: limit size, and display only this div for touch devices -->
-      <div id="p8_frame" style="display:flex; width:100%; max-width:95vw; height:100vw; max-height:95vh; margin:auto;">
+      <div id="p8_frame" style="display:flex; width:100%; max-width:95vw; height:100vw; max-height:65vh; margin:auto;">
 
         <div id="p8_menu_buttons_touch" style="position:absolute; width:100%; z-index:10; left:0px;">
           <div class="p8_menu_button" id="p8b_full" style="float:left;margin-left:10px"
@@ -123,8 +123,10 @@
     </script>
 
     <!-- end pico cart -->
-
-    <div class="row">
+    <div class="toggle-login-form row mb-2 d-none">
+      <button type="button" class="btn btn-secondary btn-sm">Show/Hide Connection Details</button>
+    </div>
+    <div class="login-form row">
       <form id="connection-details">
         <div class="input-group input-group-sm mb-2">
           <label class="input-group-text" for="hostname">Hostname:</label>
@@ -378,6 +380,13 @@
             connecting.classList.add("d-none");
             connected.classList.remove("d-none");
             // You are now connected and authenticated to the server. You can add more code here if need be.
+            const toggle = document.querySelector('.toggle-login-form');
+            const loginForm = document.querySelector('.login-form');
+            toggle.addEventListener('click', () => {
+              loginForm.classList.toggle('d-none', !loginForm.classList.contains('d-none'));
+            });
+            loginForm.classList.add('d-none');
+            toggle.classList.remove('d-none');
           })
           .catch((error) => {
             console.error("Failed to connect:", error);
